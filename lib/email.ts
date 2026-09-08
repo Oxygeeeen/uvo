@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { Resend } from 'resend';
 
 type EmailKind = 'verify' | 'verified' | 'reset';
@@ -9,6 +11,20 @@ const from =
 const adminEmail = process.env.ADMIN_EMAIL ?? 'hello@scaleworkagency.com';
 const applicationUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000';
 const logoUrl = new URL('/uvo-logo.png', applicationUrl).toString();
+const logoContentId = 'uvo-logo';
+
+let logoContentPromise: Promise<string> | undefined;
+
+function getLogoContent() {
+  logoContentPromise ??= readFile(join(process.cwd(), 'public', 'uvo-logo.png'))
+    .then((content) => content.toString('base64'))
+    .catch((error) => {
+      logoContentPromise = undefined;
+      throw error;
+    });
+
+  return logoContentPromise;
+}
 
 function escapeHtml(value: string) {
   return value.replace(
@@ -68,7 +84,7 @@ function emailDocument({
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:40px 16px;background:#f3f4ef"><tr><td align="center">
       <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;background:#fff;border:1px solid #e1e5df;border-radius:18px;overflow:hidden">
         <tr><td style="padding:26px 32px;background:#073b3a;color:#fff">
-          <table role="presentation"><tr><td style="width:68px;height:42px;border-radius:11px;background:#ffffff;text-align:center;vertical-align:middle"><img src="${escapeHtml(logoUrl)}" width="58" alt="UVO" style="display:block;width:58px;height:auto;margin:0 auto"></td><td style="padding-left:14px"><div style="font-size:15px;font-weight:700">Upstream Value Office</div><div style="font-size:12px;color:#b7d5ce;margin-top:3px">Nigerian Portfolio · secure workspace</div></td></tr></table>
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr><td width="92" height="54" align="center" valign="middle" style="width:92px;height:54px;border-radius:12px;background:#ffffff;text-align:center;vertical-align:middle"><img src="cid:${logoContentId}" width="78" height="37" alt="UVO" style="display:block;width:78px;height:37px;margin:0 auto;border:0;outline:none;text-decoration:none"></td><td valign="middle" style="padding-left:16px"><div style="font-size:15px;line-height:20px;font-weight:700;color:#ffffff">Upstream Value Office</div><div style="font-size:12px;line-height:18px;color:#b7d5ce;margin-top:2px">Nigerian Portfolio · secure workspace</div></td></tr></table>
         </td></tr>
         <tr><td style="padding:38px 32px 32px">
           <div style="font-size:11px;letter-spacing:1.6px;font-weight:700;color:#987329">${copy.eyebrow}</div>
@@ -104,7 +120,38 @@ async function send({
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const { error } = await resend.emails.send({ from, to, subject, html, text });
+  let resolvedHtml = html;
+  let attachments:
+    | {
+        content: string;
+        filename: string;
+        contentType: string;
+        contentId: string;
+      }[]
+    | undefined;
+
+  try {
+    attachments = [
+      {
+        content: await getLogoContent(),
+        filename: 'uvo-logo.png',
+        contentType: 'image/png',
+        contentId: logoContentId,
+      },
+    ];
+  } catch (error) {
+    console.error('Could not embed the UVO email logo.', error);
+    resolvedHtml = html.replace(`cid:${logoContentId}`, escapeHtml(logoUrl));
+  }
+
+  const { error } = await resend.emails.send({
+    from,
+    to,
+    subject,
+    html: resolvedHtml,
+    text,
+    attachments,
+  });
   if (error) throw new Error(error.message);
 }
 
