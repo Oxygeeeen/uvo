@@ -23,7 +23,7 @@ function wrapText(text: string, maxCharacters: number) {
   return lines;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -32,9 +32,16 @@ export async function GET() {
   const page = pdf.addPage([595.28, 841.89]);
   const regular = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const logoResponse = await fetch(new URL('/uvo-logo.png', request.url));
+  if (!logoResponse.ok) {
+    return NextResponse.json(
+      { error: 'Executive brief logo asset is unavailable.' },
+      { status: 503 },
+    );
+  }
+  const logo = await pdf.embedPng(await logoResponse.arrayBuffer());
   const navy = rgb(0.027, 0.231, 0.227);
   const teal = rgb(0.043, 0.365, 0.329);
-  const amber = rgb(0.78, 0.59, 0.27);
   const ink = rgb(0.09, 0.19, 0.18);
   const gray = rgb(0.38, 0.45, 0.43);
   const pale = rgb(0.965, 0.969, 0.949);
@@ -46,17 +53,23 @@ export async function GET() {
     height: 161.89,
     color: navy,
   });
-  page.drawRectangle({ x: 42, y: 764, width: 38, height: 38, color: amber });
-  page.drawText('NV', { x: 52, y: 777, size: 11, font: bold, color: ink });
+  page.drawRectangle({
+    x: 42,
+    y: 764,
+    width: 72,
+    height: 38,
+    color: rgb(1, 1, 1),
+  });
+  page.drawImage(logo, { x: 48, y: 769, width: 60, height: 28.7 });
   page.drawText('UPSTREAM VALUE OFFICE', {
-    x: 94,
+    x: 128,
     y: 786,
     size: 10,
     font: bold,
     color: rgb(1, 1, 1),
   });
-  page.drawText('Nigeria portfolio · Executive decision brief', {
-    x: 94,
+  page.drawText('Nigerian Portfolio · Executive decision brief', {
+    x: 128,
     y: 772,
     size: 8.5,
     font: regular,

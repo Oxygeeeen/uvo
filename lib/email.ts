@@ -7,6 +7,8 @@ const from =
   process.env.EMAIL_FROM ??
   'Nigeria Oil Value Office <hello@scaleworkagency.com>';
 const adminEmail = process.env.ADMIN_EMAIL ?? 'hello@scaleworkagency.com';
+const applicationUrl = process.env.BETTER_AUTH_URL ?? 'http://localhost:3000';
+const logoUrl = new URL('/uvo-logo.png', applicationUrl).toString();
 
 function escapeHtml(value: string) {
   return value.replace(
@@ -66,7 +68,7 @@ function emailDocument({
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:40px 16px;background:#f3f4ef"><tr><td align="center">
       <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;background:#fff;border:1px solid #e1e5df;border-radius:18px;overflow:hidden">
         <tr><td style="padding:26px 32px;background:#073b3a;color:#fff">
-          <table role="presentation"><tr><td style="width:42px;height:42px;border-radius:12px;background:#e3bb68;text-align:center;vertical-align:middle;font-weight:800;color:#17302e">NV</td><td style="padding-left:14px"><div style="font-size:15px;font-weight:700">Upstream Value Office</div><div style="font-size:12px;color:#b7d5ce;margin-top:3px">Nigeria portfolio · secure workspace</div></td></tr></table>
+          <table role="presentation"><tr><td style="width:68px;height:42px;border-radius:11px;background:#ffffff;text-align:center;vertical-align:middle"><img src="${escapeHtml(logoUrl)}" width="58" alt="UVO" style="display:block;width:58px;height:auto;margin:0 auto"></td><td style="padding-left:14px"><div style="font-size:15px;font-weight:700">Upstream Value Office</div><div style="font-size:12px;color:#b7d5ce;margin-top:3px">Nigerian Portfolio · secure workspace</div></td></tr></table>
         </td></tr>
         <tr><td style="padding:38px 32px 32px">
           <div style="font-size:11px;letter-spacing:1.6px;font-weight:700;color:#987329">${copy.eyebrow}</div>

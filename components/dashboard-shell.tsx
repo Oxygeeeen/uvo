@@ -14,13 +14,12 @@ import {
   Globe2,
   LayoutDashboard,
   LogOut,
-  Menu,
   ShieldAlert,
   TrendingUp,
   UserRound,
-  Waves,
 } from 'lucide-react';
 
+import { BrandMark } from '@/components/brand-mark';
 import { ExecutiveBriefDialog } from '@/components/executive-brief-dialog';
 import { Button } from '@/components/ui/button';
 import {
@@ -177,14 +176,16 @@ function AppSidebar({ user }: { user: ShellUser }) {
           className="flex items-center gap-3 overflow-hidden"
           aria-label="Nigeria Oil Value Command Center home"
         >
-          <div className="grid size-10 shrink-0 place-items-center rounded-[13px] bg-[#073b3a] text-white shadow-sm">
-            <Waves className="size-5" />
+          <div className="grid h-10 w-[58px] shrink-0 place-items-center rounded-[12px] border border-[#e1e7e2] bg-white px-1.5 shadow-sm">
+            <BrandMark className="w-full" priority />
           </div>
           <div className="min-w-0 group-data-[collapsible=icon]:hidden">
             <p className="truncate text-sm font-semibold tracking-[-0.01em] text-[#102a2a]">
               Upstream Value Office
             </p>
-            <p className="truncate text-xs text-[#75817f]">Nigeria portfolio</p>
+            <p className="truncate text-xs text-[#75817f]">
+              Nigerian Portfolio
+            </p>
           </div>
         </Link>
       </SidebarHeader>
@@ -385,15 +386,18 @@ function ProtectedDashboardShell({ children }: { children: ReactNode }) {
 
   return (
     <SidebarProvider
+      open
+      onOpenChange={() => undefined}
       style={{ '--sidebar-width': '15.75rem' } as React.CSSProperties}
     >
       <AppSidebar user={user} />
       <SidebarInset className="min-w-0 bg-[#f6f5f1]">
         <header className="sticky top-0 z-30 flex h-[68px] items-center justify-between border-b border-[#e5e6e1] bg-[#fbfaf7]/90 px-4 backdrop-blur-xl sm:px-7 lg:px-9">
           <div className="flex min-w-0 items-center gap-3">
-            <SidebarTrigger aria-label="Toggle navigation">
-              <Menu />
-            </SidebarTrigger>
+            <SidebarTrigger
+              aria-label="Open navigation"
+              className="md:hidden"
+            />
             <div className="hidden h-5 w-px bg-[#dfe2dc] sm:block" />
             <div className="min-w-0">
               <p className="truncate text-[13px] font-semibold text-[#253b39]">

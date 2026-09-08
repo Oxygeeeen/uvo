@@ -5,8 +5,9 @@ import {
   CircleDollarSign,
   ShieldCheck,
   TrendingUp,
-  Waves,
 } from 'lucide-react';
+
+import { BrandMark } from '@/components/brand-mark';
 
 const proofPoints = [
   { icon: BarChart3, label: 'Production variance', value: '1.670 mb/d' },
@@ -33,15 +34,15 @@ export function AuthShell({
           <div className="absolute -right-20 -top-6 size-[330px] rounded-full border border-white/8" />
           <div className="absolute bottom-[-160px] left-[-80px] size-[390px] rounded-full bg-[#0b6a5f]/35 blur-3xl" />
           <Link href="/login" className="relative flex items-center gap-3">
-            <span className="grid size-11 place-items-center rounded-[14px] bg-[#e4bd6e] text-[#17302e] shadow-lg shadow-black/10">
-              <Waves className="size-5" />
+            <span className="grid h-11 w-[68px] place-items-center rounded-[13px] border border-white/15 bg-white px-1.5 shadow-lg shadow-black/10">
+              <BrandMark className="w-full" priority />
             </span>
             <span>
               <span className="block text-sm font-bold tracking-[-0.01em]">
                 Upstream Value Office
               </span>
               <span className="mt-0.5 block text-xs text-[#a8c8c1]">
-                Nigeria portfolio
+                Nigerian Portfolio
               </span>
             </span>
           </Link>
@@ -85,14 +86,14 @@ export function AuthShell({
         <section className="flex items-center justify-center px-5 py-10 sm:px-10 lg:px-14">
           <div className="w-full max-w-[470px]">
             <div className="mb-8 flex items-center gap-3 lg:hidden">
-              <span className="grid size-10 place-items-center rounded-xl bg-[#073b3a] text-white">
-                <Waves className="size-5" />
+              <span className="grid h-10 w-[62px] place-items-center rounded-xl border border-[#dde4de] bg-white px-1.5 shadow-sm">
+                <BrandMark className="w-full" priority />
               </span>
               <div>
                 <p className="text-sm font-semibold text-[#17302e]">
                   Upstream Value Office
                 </p>
-                <p className="text-xs text-[#7c8985]">Nigeria portfolio</p>
+                <p className="text-xs text-[#7c8985]">Nigerian Portfolio</p>
               </div>
             </div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#9a742c]">
